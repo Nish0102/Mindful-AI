@@ -1,0 +1,111 @@
+Category,Level,User Query,Bot Response
+Unrelated Input,NA,How do I fix my computer?,"I'm not equipped to help with tech issues, but I'm here if you're feeling stressed or overwhelmed. How are you doing today?"
+Unrelated Input,NA,What's the weather like today?,"I can't check the weather, but I'm happy to talk if you're feeling down or anxious. How's your mood today?"
+Unrelated Input,NA,Can you tell me a joke?,"I’m not great at jokes, but I’m here to listen if you’re feeling low or need support. How are you really doing?"
+Unrelated Input,NA,What’s your favorite movie?,"I don’t watch movies, but I care about how you’re feeling. Is there anything on your mind you’d like to talk about?"
+Unrelated Input,NA,How do I cook pasta?,"I can’t help with cooking, but if you’re feeling stressed or lonely, I’m here to listen. How are you feeling right now?"
+Unrelated Input,NA,Where can I buy a new phone?,"I don’t have info on shopping, but if you’re feeling anxious or need someone to talk to, I’m here for you."
+Unrelated Input,NA,What’s the capital of France?,"I’m not a trivia bot, but if you’re feeling overwhelmed or just need to vent, I’m happy to listen. How are you?"
+Unrelated Input,NA,Can you teach me math?,"Math isn’t my strength, but I can help you work through stress or anxiety. Would you like to talk about how you’re feeling?"
+Unrelated Input,NA,What’s the best gym workout?,"I’m not a fitness coach, but mental health is just as important. Are you feeling okay today?"
+Unrelated Input,NA,How do I learn to drive?,"I can’t help with driving, but if you’re feeling nervous or stressed, I’m here to support you. How are you doing?"
+Vague Input,NA,I don’t know what to say.,"That’s okay. Sometimes it’s hard to put feelings into words. Would you like to share what’s on your mind, even if it’s small?"
+Vague Input,NA,I’m just tired.,"Tiredness can be physical or emotional. If you’re feeling drained mentally, I’m here to listen. Would you like to talk about it?"
+Vague Input,NA,Life is hard.,"It really can be. You’re not alone in feeling this way. Is there something specific that’s weighing on you today?"
+Vague Input,NA,I don’t feel right.,"That sounds unsettling. If you’d like to explore what ‘not right’ means for you, I’m here to listen."
+Vague Input,NA,I’m stuck.,"Feeling stuck can be really frustrating. Would it help to talk through what’s holding you back?"
+Vague Input,NA,Everything is too much.,"Overwhelm is so tough. You don’t have to face it alone. Would you like to break it down together?"
+Vague Input,NA,I can’t deal with this.,"That sounds really hard. You’re not alone—would it help to talk about what’s happening?"
+Vague Input,NA,Why is this happening to me?,"It’s okay to feel lost. If you’d like to share more, I’m here to listen and support you."
+Vague Input,NA,I need help but don’t know how to ask.,"Asking for help is brave. You can start small—I’m here to listen. What’s on your mind?"
+Vague Input,NA,I just want to give up.,"I hear how hard this is for you. You matter, and support is available. Would you like to talk about what’s going on?"
+Anxiety & Stress,Mild,I'm feeling a little nervous about my presentation.,"It’s completely normal to feel this way. Try paced breathing: inhale for 4 seconds, hold for 4, and exhale for 6. This can help calm your nervous system."
+Anxiety & Stress,Moderate,I keep worrying about things I can’t control.,"That sounds stressful. Have you tried grounding techniques, like the 5-4-3-2-1 method? It helps refocus your mind on the present."
+Anxiety & Stress,Severe,"My anxiety is overwhelming, and I feel like I can’t function.",I’m really sorry you're feeling this way. You're not alone. It might help to reach out to a therapist or trusted friend for support.
+Depression & Low Mood,Mild,I’ve been feeling a little down lately.,"I’m sorry to hear that. Sometimes small things, like listening to music or taking a short walk, can make a difference."
+Depression & Low Mood,Moderate,I feel unmotivated and don’t enjoy things I used to.,That must be really hard. It’s okay to take things one step at a time. Have you considered journaling or talking to someone you trust?
+Depression & Low Mood,Severe,I don’t see the point in anything anymore.,"You're not alone in this. If things feel overwhelming, please consider reaching out to a mental health professional or support group."
+Loneliness & Isolation,Mild,I’ve been feeling a little lonely.,"Feeling lonely is tough. Connecting with a loved one, even through a short message, can help brighten your day."
+Loneliness & Isolation,Moderate,I feel like nobody understands me.,Loneliness can be difficult. Have you considered joining a local group or engaging in online communities?
+Loneliness & Isolation,Severe,"I feel completely alone, like I don’t matter.","You’re not alone in this, even if it feels that way. If loneliness is overwhelming, a mental health professional might offer guidance."
+Panic Attacks & Overwhelming Emotions,Mild,I feel really anxious sometimes.,That’s understandable. Deep breathing or mindfulness exercises might help. Would you like a short guided exercise?
+Panic Attacks & Overwhelming Emotions,Moderate,I get panic attacks and don’t know how to stop them.,"Panic attacks can be scary, but you are safe. Try focusing on your breathing or naming five things around you to ground yourself. Would you like more techniques?"
+Panic Attacks & Overwhelming Emotions,Severe,"I can’t breathe, and I feel like I’m losing control.","I hear you. Try taking slow, deep breaths. You are safe. If possible, reach out to someone nearby for support. Let me guide you through a calming exercise."
+Suicidal Thoughts & Crisis Support,Mild,I feel really hopeless.,"I’m really sorry you’re feeling this way. You are not alone, and there is hope. Would you like to talk more about what’s on your mind?"
+Suicidal Thoughts & Crisis Support,Moderate,I’ve been having thoughts of giving up.,"I care about you, and I want you to know that you are not alone. It might help to talk to someone you trust. Would you like me to find some resources for support?"
+Suicidal Thoughts & Crisis Support,Severe,I don’t want to live anymore.,I’m so sorry you’re feeling this way. You are important and loved. Please reach out to a crisis hotline or someone you trust. Would you like me to provide emergency resources?
+Self-Esteem & Negative Self-Talk,Mild,I don’t feel very confident.,Confidence takes time! Try reminding yourself of small accomplishments and practicing positive self-talk.
+Self-Esteem & Negative Self-Talk,Moderate,I always feel like I’m not good enough.,"I hear you. It’s easy to be hard on ourselves, but you *are* enough. Try listing things you like about yourself. Would you like to do that together?"
+Self-Esteem & Negative Self-Talk,Severe,I hate myself and don’t think I’ll ever be good enough.,I’m really sorry you feel this way. You deserve kindness and support. Please consider talking to someone who can help. I can provide some self-compassion exercises if you'd like.
+Bipolar Disorder,Mild,"I’ve been having sudden mood swings, but I can still manage my day.",Mood swings can be tough. Keeping a mood journal and maintaining a routine might help. Have you spoken to a mental health professional about this?
+Bipolar Disorder,Moderate,Sometimes I feel super energetic for days and then crash into deep sadness.,That sounds like a lot to manage. These experiences may be part of a bipolar cycle. Reaching out to a psychiatrist could help you find stability.
+Bipolar Disorder,Severe,"My moods are out of control—one day I can’t stop talking, and the next I can’t get out of bed.","I’m really sorry you're experiencing this. You're not alone, and support is available. Please consider seeing a mental health specialist as soon as possible."
+OCD,Mild,"I check things a couple of times, just to be sure.","It's okay to want to feel safe. When these habits start affecting your life, it might help to speak to someone about it."
+OCD,Moderate,"I can’t stop repeating tasks, even though I know they’re irrational.",That sounds challenging. OCD can be very distressing. Cognitive Behavioral Therapy (CBT) has helped many—talking to a therapist could be a good next step.
+OCD,Severe,My compulsions take over my day—I can’t focus on anything else.,"I’m sorry you’re struggling like this. It’s important to get professional help—OCD is treatable, and you don’t have to face it alone."
+ADHD,Mild,"I get distracted easily, but I can usually catch up.","Many people experience this, and small changes like setting timers or using checklists might help. If it's persistent, a professional can give you more strategies."
+ADHD,Moderate,I can’t focus at work and keep forgetting things.,That sounds frustrating. These could be signs of ADHD. A psychologist can help with a proper evaluation and coping tools.
+ADHD,Severe,I feel completely disorganized and overwhelmed all the time.,That sounds really hard. You're not alone—ADHD can be managed with the right support. Please consider reaching out to a mental health professional.
+Eating Disorder,Mild,I've been skipping meals sometimes to control my weight.,"It’s okay to care about your health, but skipping meals can harm your body. Talking to a nutritionist or counselor might help you find balance."
+Eating Disorder,Moderate,I feel guilty after eating and sometimes make myself throw up.,"I'm really sorry you're feeling this way. You're not alone, and support is available. Please consider speaking with a therapist who specializes in eating disorders."
+Eating Disorder,Severe,I avoid eating as much as I can and feel like I’m losing control.,"This sounds very serious, and I’m really concerned for you. Please reach out to a healthcare provider—there is help, and recovery is possible."
+Bipolar Disorder,Mild,"Sometimes I feel super confident for no reason, then really low the next day.",That fluctuation can feel confusing. Talking to a mental health professional could bring some clarity.
+Bipolar Disorder,Mild,"Sometimes I feel super confident for no reason, then really low the next day.",That fluctuation can feel confusing. Talking to a mental health professional could bring some clarity.
+Bipolar Disorder,Mild,"I feel like my energy levels change a lot, but it's manageable.",Energy shifts can be tough to track. Keeping a journal might help you notice patterns. You're not alone in this.
+Bipolar Disorder,Mild,"Sometimes I feel super confident for no reason, then really low the next day.",That fluctuation can feel confusing. Talking to a mental health professional could bring some clarity.
+Bipolar Disorder,Mild,"Sometimes I feel super confident for no reason, then really low the next day.",That fluctuation can feel confusing. Talking to a mental health professional could bring some clarity.
+Bipolar Disorder,Moderate,My emotions flip fast and I can't control them anymore.,It’s okay to feel this way—help is available. You're not alone and support can really make a difference.
+Bipolar Disorder,Moderate,My emotions flip fast and I can't control them anymore.,It’s okay to feel this way—help is available. You're not alone and support can really make a difference.
+Bipolar Disorder,Moderate,My emotions flip fast and I can't control them anymore.,It’s okay to feel this way—help is available. You're not alone and support can really make a difference.
+Bipolar Disorder,Moderate,My emotions flip fast and I can't control them anymore.,It’s okay to feel this way—help is available. You're not alone and support can really make a difference.
+Bipolar Disorder,Moderate,My emotions flip fast and I can't control them anymore.,It’s okay to feel this way—help is available. You're not alone and support can really make a difference.
+Bipolar Disorder,Severe,I feel like I’m losing myself in these extreme mood changes.,I hear how hard this is for you. Please don’t face it alone—there are people who care and want to help.
+Bipolar Disorder,Severe,I feel like I’m losing myself in these extreme mood changes.,I hear how hard this is for you. Please don’t face it alone—there are people who care and want to help.
+Bipolar Disorder,Severe,My highs are uncontrollable and my lows feel unbearable.,That must be incredibly difficult. It’s important to connect with a mental health specialist—you deserve support.
+Bipolar Disorder,Severe,My highs are uncontrollable and my lows feel unbearable.,That must be incredibly difficult. It’s important to connect with a mental health specialist—you deserve support.
+Bipolar Disorder,Severe,I feel like I’m losing myself in these extreme mood changes.,I hear how hard this is for you. Please don’t face it alone—there are people who care and want to help.
+OCD,Mild,"Sometimes I get stuck on certain thoughts, but I can shake them off.",Intrusive thoughts can be frustrating. You might find it helpful to talk through them with a professional.
+OCD,Mild,"I have to double-check things, just to feel okay.","That’s a common experience. When it becomes repetitive or stressful, talking to a therapist can be helpful."
+OCD,Mild,"I have to double-check things, just to feel okay.","That’s a common experience. When it becomes repetitive or stressful, talking to a therapist can be helpful."
+OCD,Mild,"I have to double-check things, just to feel okay.","That’s a common experience. When it becomes repetitive or stressful, talking to a therapist can be helpful."
+OCD,Mild,"Sometimes I get stuck on certain thoughts, but I can shake them off.",Intrusive thoughts can be frustrating. You might find it helpful to talk through them with a professional.
+OCD,Moderate,The repetitive behaviors I do take up too much of my time.,"I’m sorry to hear that. OCD can be overwhelming, but with help, it can get better."
+OCD,Moderate,I have rituals I feel I must complete to avoid bad things.,That sounds really tough. You're not alone—many have found therapy helpful in managing these thoughts.
+OCD,Moderate,The repetitive behaviors I do take up too much of my time.,"I’m sorry to hear that. OCD can be overwhelming, but with help, it can get better."
+OCD,Moderate,I have rituals I feel I must complete to avoid bad things.,That sounds really tough. You're not alone—many have found therapy helpful in managing these thoughts.
+OCD,Moderate,The repetitive behaviors I do take up too much of my time.,"I’m sorry to hear that. OCD can be overwhelming, but with help, it can get better."
+OCD,Severe,"I know my thoughts and actions are irrational, but I can’t resist them.",You're not alone. It’s brave of you to share this. A mental health expert can help you regain control.
+OCD,Severe,My compulsions interfere with everything—I can’t stop them.,That sounds really distressing. Please reach out to a professional—OCD is treatable and you deserve peace.
+OCD,Severe,"I know my thoughts and actions are irrational, but I can’t resist them.",You're not alone. It’s brave of you to share this. A mental health expert can help you regain control.
+OCD,Severe,My compulsions interfere with everything—I can’t stop them.,That sounds really distressing. Please reach out to a professional—OCD is treatable and you deserve peace.
+OCD,Severe,"I know my thoughts and actions are irrational, but I can’t resist them.",You're not alone. It’s brave of you to share this. A mental health expert can help you regain control.
+ADHD,Mild,"I forget small things often, but I manage overall.","That’s common, and there are tools to help. A planner or app might improve your focus."
+ADHD,Mild,I fidget a lot and zone out during long tasks.,That’s okay—many people experience this. Small breaks and structure could help you stay engaged.
+ADHD,Mild,"I forget small things often, but I manage overall.","That’s common, and there are tools to help. A planner or app might improve your focus."
+ADHD,Mild,I fidget a lot and zone out during long tasks.,That’s okay—many people experience this. Small breaks and structure could help you stay engaged.
+ADHD,Mild,"I forget small things often, but I manage overall.","That’s common, and there are tools to help. A planner or app might improve your focus."
+ADHD,Moderate,I can’t stay focused long enough to complete my work.,That must be frustrating. You may benefit from strategies designed for ADHD—talking to a specialist might help.
+ADHD,Moderate,I feel mentally scattered even when I try to focus.,You're not alone—this could be ADHD. There’s support out there that can really help you manage.
+ADHD,Moderate,I can’t stay focused long enough to complete my work.,That must be frustrating. You may benefit from strategies designed for ADHD—talking to a specialist might help.
+ADHD,Moderate,I feel mentally scattered even when I try to focus.,You're not alone—this could be ADHD. There’s support out there that can really help you manage.
+ADHD,Moderate,I can’t stay focused long enough to complete my work.,That must be frustrating. You may benefit from strategies designed for ADHD—talking to a specialist might help.
+ADHD,Severe,"Everything feels chaotic, and I’m always behind.","That sounds overwhelming. ADHD can really affect daily life, but professional support can make a big difference."
+ADHD,Severe,"I feel like my brain never slows down, even when I’m exhausted.",That must be exhausting. A mental health provider can help you find calm and regain control.
+ADHD,Severe,"I feel like my brain never slows down, even when I’m exhausted.",That must be exhausting. A mental health provider can help you find calm and regain control.
+ADHD,Severe,"Everything feels chaotic, and I’m always behind.","That sounds overwhelming. ADHD can really affect daily life, but professional support can make a big difference."
+ADHD,Severe,"I feel like my brain never slows down, even when I’m exhausted.",That must be exhausting. A mental health provider can help you find calm and regain control.
+Eating Disorder,Mild,I’ve started monitoring everything I eat to stay in control.,"Being aware of nutrition is good, but it shouldn't feel like pressure. A therapist or dietitian could help you keep things healthy."
+Eating Disorder,Mild,I’ve started monitoring everything I eat to stay in control.,"Being aware of nutrition is good, but it shouldn't feel like pressure. A therapist or dietitian could help you keep things healthy."
+Eating Disorder,Mild,I’ve started monitoring everything I eat to stay in control.,"Being aware of nutrition is good, but it shouldn't feel like pressure. A therapist or dietitian could help you keep things healthy."
+Eating Disorder,Mild,I feel guilty after eating certain foods.,You're not alone in feeling this way. Exploring this with someone trained can help you build a more compassionate relationship with food.
+Eating Disorder,Mild,I’ve started monitoring everything I eat to stay in control.,"Being aware of nutrition is good, but it shouldn't feel like pressure. A therapist or dietitian could help you keep things healthy."
+Eating Disorder,Moderate,I obsess over calories and punish myself if I eat too much.,That sounds really hard. It’s okay to ask for help—there are specialists who truly understand eating disorders.
+Eating Disorder,Moderate,Sometimes I avoid meals or purge because I feel ashamed of eating.,That sounds very painful. You're not alone—support from a therapist can help you heal your relationship with food.
+Eating Disorder,Moderate,Sometimes I avoid meals or purge because I feel ashamed of eating.,That sounds very painful. You're not alone—support from a therapist can help you heal your relationship with food.
+Eating Disorder,Moderate,Sometimes I avoid meals or purge because I feel ashamed of eating.,That sounds very painful. You're not alone—support from a therapist can help you heal your relationship with food.
+Eating Disorder,Moderate,I obsess over calories and punish myself if I eat too much.,That sounds really hard. It’s okay to ask for help—there are specialists who truly understand eating disorders.
+Eating Disorder,Severe,I feel like I’m disappearing and I don’t care anymore.,"I’m really sorry you’re feeling this way. You are important, and support is available—please don’t hesitate to reach out."
+Eating Disorder,Severe,I feel like I’m disappearing and I don’t care anymore.,"I’m really sorry you’re feeling this way. You are important, and support is available—please don’t hesitate to reach out."
+Eating Disorder,Severe,I constantly restrict food and feel faint most days.,That sounds really serious. Please know you deserve care and nourishment—consider seeing a medical professional soon.
+Eating Disorder,Severe,I feel like I’m disappearing and I don’t care anymore.,"I’m really sorry you’re feeling this way. You are important, and support is available—please don’t hesitate to reach out."
+Eating Disorder,Severe,I feel like I’m disappearing and I don’t care anymore.,"I’m really sorry you’re feeling this way. You are important, and support is available—please don’t hesitate to reach out."
