@@ -1,156 +1,180 @@
-from flask import Flask, render_template, request, jsonify, session
-from flask_cors import CORS
-import pandas as pd
-import random
-import re
-import nltk
-from nltk.corpus import stopwords
-from sentence_transformers import SentenceTransformer, util
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from typing import List, Optional
+import os
+from dotenv import load_dotenv
+from groq import Groq
+from textblob import TextBlob
+from datetime import datetime
 
+load_dotenv()
 
-# Download stopwords if not already downloaded
-nltk.download('stopwords')
-stop_words = set(stopwords.words('english'))
+app = FastAPI(title="MindfulAI Backend")
 
-# Hardcoded responses for common phrases
-hardcoded_responses = {
-    "hi": "Hey! How's it going?",
-    "hello": "Hey there! How can I help you?",
-    "hey": "Hey! What’s on your mind?",
-    "how are you": "I’m doing great! How about you?",
-    "good morning": "Morning! Hope your day’s going well.",
-    "good evening": "Good evening! How’s your day been?",
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+
+SYSTEM_PROMPT = """You are MindfulAI, a warm, empathetic mental health support companion. 
+
+Your role:
+- Listen actively and validate feelings without judgment
+- Use therapeutic techniques like CBT reframing, mindfulness prompts, and grounding exercises
+- Ask gentle clarifying questions to understand the user better
+- Suggest practical coping strategies tailored to what they share
+- Use calming, caring language — never clinical or cold
+- Keep responses concise (2-4 paragraphs max) unless the user needs detailed guidance
+
+Important rules:
+- You are NOT a replacement for professional therapy — gently mention this when appropriate
+- If you detect crisis signals (suicidal ideation, self-harm), IMMEDIATELY respond with crisis resources and urge professional help
+- Never diagnose conditions
+- Always end with a question or gentle prompt to keep the conversation going
+
+Crisis keywords to watch: "kill myself", "end it all", "don't want to live", "hurt myself", "suicide", "self harm"
+"""
+
+RESOURCES = {
+    "anxiety": [
+        {"title": "4-7-8 Breathing Exercise", "type": "exercise", "desc": "Inhale 4s, hold 7s, exhale 8s. Repeat 4 times.", "link": "https://www.healthline.com/health/4-7-8-breathing"},
+        {"title": "Understanding Anxiety", "type": "article", "desc": "How anxiety works and evidence-based coping strategies.", "link": "https://www.anxietycanada.com/articles/what-is-anxiety/"},
+    ],
+    "depression": [
+        {"title": "Behavioral Activation Guide", "type": "exercise", "desc": "Schedule small enjoyable activities to lift mood.", "link": "https://www.psychologytools.com/resource/behavioral-activation/"},
+        {"title": "Understanding Depression", "type": "article", "desc": "Signs, causes, and paths to recovery.", "link": "https://www.nimh.nih.gov/health/topics/depression"},
+    ],
+    "stress": [
+        {"title": "Progressive Muscle Relaxation", "type": "exercise", "desc": "Tense and release each muscle group to release tension.", "link": "https://www.mayoclinic.org/healthy-lifestyle/stress-management/in-depth/relaxation-technique/art-20045368"},
+        {"title": "5-4-3-2-1 Grounding", "type": "exercise", "desc": "Name 5 things you see, 4 you hear, 3 you can touch, 2 you smell, 1 you taste.", "link": "https://www.verywellmind.com/grounding-techniques-for-anxiety-4692574"},
+    ],
+    "sleep": [
+        {"title": "Sleep Hygiene Tips", "type": "article", "desc": "Evidence-based habits for better sleep quality.", "link": "https://www.sleepfoundation.org/sleep-hygiene"},
+        {"title": "Body Scan Meditation", "type": "exercise", "desc": "Guided relaxation to help you fall asleep.", "link": "https://www.mindful.org/body-scan-meditation/"},
+    ],
+    "general": [
+        {"title": "Mindfulness Meditation", "type": "exercise", "desc": "A 5-minute breathing meditation to center yourself.", "link": "https://www.headspace.com/meditation/breathing-exercises"},
+        {"title": "Journaling for Mental Health", "type": "article", "desc": "How writing helps process emotions and reduce stress.", "link": "https://www.urmc.rochester.edu/encyclopedia/content.aspx?ContentID=4552&ContentTypeID=1"},
+    ],
 }
 
-# Contraction mapping for more natural input processing
-contraction_mapping = {
-    "i'm": "i am",
-    "you're": "you are",
-    "he's": "he is",
-    "she's": "she is",
-    "it's": "it is",
-    "they're": "they are",
-    "we're": "we are",
-    "isn't": "is not",
-    "aren't": "are not",
-    "wasn't": "was not",
-    "weren't": "were not",
-    "don't": "do not",
-    "doesn't": "does not",
-    "didn't": "did not",
-    "can't": "cannot",
-    "couldn't": "could not",
-    "shouldn't": "should not",
-    "won't": "will not",
-    "wouldn't": "would not",
-    "haven't": "have not",
-    "hasn't": "has not",
-    "hadn't": "had not"
-}
+CRISIS_KEYWORDS = ["kill myself", "end it all", "don't want to live", "hurt myself", "suicide", "self harm", "selfharm", "want to die", "no reason to live"]
 
-def preprocess_text(text):
-    """Cleans text, expands contractions, and removes stopwords for better matching."""
-    text = text.lower().strip()
+CRISIS_RESPONSE = """I hear you, and I'm deeply concerned about your safety right now. 
 
-    # Expand contractions
-    for contraction, full_form in contraction_mapping.items():
-        text = text.replace(contraction, full_form)
+Please reach out immediately to:
+🆘 **iCall (India)**: 9152987821
+🆘 **Vandrevala Foundation**: 1860-2662-345 (24/7)
+🆘 **NIMHANS**: 080-46110007
 
-    # Keep common greetings unchanged
-    if text in hardcoded_responses:
-        return text  
+You don't have to face this alone. A trained counselor can help right now. Would you be willing to call one of these numbers?"""
 
-    text = re.sub(r'[^a-zA-Z0-9\s]', '', text)  # Remove special characters
-    words = text.split()
-    words = [word for word in words if word not in stop_words]  # Remove stopwords
-    return ' '.join(words)
+class Message(BaseModel):
+    role: str
+    content: str
 
-app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
-app.secret_key = "your_secret_key"  # Required for session tracking
+class ChatRequest(BaseModel):
+    messages: List[Message]
+    session_id: Optional[str] = None
 
-# Load the dataset
-file_path = r"V:\AI Hackday Hackathon Project\Hackday\data.csv"
-df = pd.read_csv(file_path)
+class SentimentRequest(BaseModel):
+    text: str
 
-# Ensure required columns exist
-if 'User Query' not in df.columns or 'Bot Response' not in df.columns:
-    raise ValueError("Dataset must contain 'User Query' and 'Bot Response' columns.")
+def detect_crisis(text: str) -> bool:
+    text_lower = text.lower()
+    return any(kw in text_lower for kw in CRISIS_KEYWORDS)
 
-df['Processed Query'] = df['User Query'].apply(preprocess_text)
+def analyze_sentiment(text: str) -> dict:
+    blob = TextBlob(text)
+    polarity = blob.sentiment.polarity  # -1 to 1
+    subjectivity = blob.sentiment.subjectivity  # 0 to 1
 
-# Load an improved semantic matching model (Paraphrase-aware)
-model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
-query_embeddings = model.encode(df['Processed Query'].tolist(), convert_to_tensor=True)
-
-def get_response(user_input):
-    """Handles conversational language and provides relevant responses."""
-    user_input = preprocess_text(user_input)
-
-    # Check if user is responding to a follow-up question
-    last_bot_question = session.get("last_bot_question", None)
-    if last_bot_question:
-        session["last_bot_question"] = None  # Clear after receiving a response
-        return handle_follow_up(user_input, last_bot_question)
-
-    # Check for direct responses
-    if user_input in hardcoded_responses:
-        return hardcoded_responses[user_input]
-
-    # Handle empty or unclear inputs
-    if not user_input.strip():
-        return "Could you clarify that for me?"
-
-    # Use semantic similarity for better matching
-    user_embedding = model.encode(user_input, convert_to_tensor=True)
-    similarities = util.pytorch_cos_sim(user_embedding, query_embeddings).flatten()
-
-    top_index = similarities.argmax().item()  
-    top_score = similarities[top_index].item()
-
-    print(f"Top similarity score: {top_score}")  # Debugging log
-
-    dynamic_threshold = 0.3  # Slightly relaxed threshold
-
-    if top_score > dynamic_threshold:
-        bot_response = df.iloc[top_index]['Bot Response']
+    if polarity > 0.3:
+        mood = "positive"
+        emoji = "😊"
+    elif polarity > 0.0:
+        mood = "slightly positive"
+        emoji = "🙂"
+    elif polarity == 0.0:
+        mood = "neutral"
+        emoji = "😐"
+    elif polarity > -0.3:
+        mood = "slightly negative"
+        emoji = "😔"
     else:
-        bot_response = "Hmm, I’m not sure I understand. Could you explain a little more?"
+        mood = "negative"
+        emoji = "😢"
 
-    # Store context for follow-ups if needed
-    if bot_response.endswith("?"):  # If the bot response is a question, save it
-        session["last_bot_question"] = bot_response
+    return {
+        "polarity": round(polarity, 3),
+        "subjectivity": round(subjectivity, 3),
+        "mood": mood,
+        "emoji": emoji,
+        "score": round((polarity + 1) / 2 * 100)  # 0-100 scale
+    }
 
-    return bot_response
+def get_resources(messages: List[Message]) -> List[dict]:
+    all_text = " ".join([m.content.lower() for m in messages])
+    matched = []
+    for topic, resources in RESOURCES.items():
+        if topic != "general" and topic in all_text:
+            matched.extend(resources)
+    if not matched:
+        matched = RESOURCES["general"]
+    return matched[:3]
 
-def handle_follow_up(user_input, last_bot_question):
-    """Provides meaningful follow-ups based on the user’s previous response."""
-    if "stress" in last_bot_question.lower():
-        return "I hear you. Have you tried taking a break or talking to someone about it?"
+@app.post("/chat")
+async def chat(request: ChatRequest):
+    last_message = request.messages[-1].content if request.messages else ""
 
-    if "feeling down" in last_bot_question.lower():
-        return "I’m really sorry you’re feeling that way. Do you want to talk about what’s on your mind?"
+    # Crisis detection
+    is_crisis = detect_crisis(last_message)
+    if is_crisis:
+        sentiment = analyze_sentiment(last_message)
+        resources = get_resources(request.messages)
+        return {
+            "response": CRISIS_RESPONSE,
+            "sentiment": sentiment,
+            "resources": resources,
+            "is_crisis": True
+        }
 
-    return "Thanks for sharing that. I'm here to listen."
+    # Build messages for Groq
+    groq_messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+    for msg in request.messages[-10:]:  # last 10 messages for context
+        groq_messages.append({"role": msg.role, "content": msg.content})
 
-@app.route("/")
-def home():
-    session.clear()  # Reset conversation on a new session
-    return render_template("index.html")
+    try:
+        completion = client.chat.completions.create(
+            model="llama3-8b-8192",
+            messages=groq_messages,
+            temperature=0.75,
+            max_tokens=600,
+        )
+        response_text = completion.choices[0].message.content
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"LLM error: {str(e)}")
 
-@app.route("/get_response", methods=["POST"])
-def chatbot_response():
-    """Handles chatbot API requests."""
-    data = request.get_json()
-    user_message = data.get("message", "")
+    sentiment = analyze_sentiment(last_message)
+    resources = get_resources(request.messages)
 
-    # Get the bot's response
-    bot_reply = get_response(user_message)
+    return {
+        "response": response_text,
+        "sentiment": sentiment,
+        "resources": resources,
+        "is_crisis": False
+    }
 
-    return jsonify({"response": bot_reply})
+@app.post("/analyze-sentiment")
+async def analyze(req: SentimentRequest):
+    return analyze_sentiment(req.text)
 
-if __name__ == "__main__":
-    app.run(debug=True)
-
-
-
+@app.get("/health")
+async def health():
+    return {"status": "ok", "timestamp": datetime.now().isoformat()}
