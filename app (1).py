@@ -7,11 +7,13 @@ from dotenv import load_dotenv
 from groq import Groq
 from textblob import TextBlob
 from datetime import datetime
+import logging
 
 load_dotenv()
 
 app = FastAPI(title="MindfulAI Backend")
 
+# -------------------- CORS --------------------
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://localhost:3000"],
@@ -20,61 +22,71 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# -------------------- Logging --------------------
+logging.basicConfig(
+    filename="app.log",
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
+# -------------------- Groq Client --------------------
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
-SYSTEM_PROMPT = """You are MindfulAI, a warm, empathetic mental health support companion. 
+# -------------------- Memory (Session-based) --------------------
+sessions = {}
 
-Your role:
-- Listen actively and validate feelings without judgment
-- Use therapeutic techniques like CBT reframing, mindfulness prompts, and grounding exercises
-- Ask gentle clarifying questions to understand the user better
-- Suggest practical coping strategies tailored to what they share
-- Use calming, caring language — never clinical or cold
-- Keep responses concise (2-4 paragraphs max) unless the user needs detailed guidance
+def get_session_history(session_id: str):
+    return sessions.get(session_id, [])
 
-Important rules:
-- You are NOT a replacement for professional therapy — gently mention this when appropriate
-- If you detect crisis signals (suicidal ideation, self-harm), IMMEDIATELY respond with crisis resources and urge professional help
+def update_session(session_id: str, messages):
+    sessions[session_id] = messages[-20:]
+
+# -------------------- Prompt --------------------
+SYSTEM_PROMPT = """You are MindfulAI, a warm, empathetic mental health support companion.
+
+- Validate emotions first
+- Use gentle, supportive tone
+- Suggest 1–2 practical coping strategies
+- Ask a soft follow-up question
+- Keep responses concise (2–4 paragraphs)
+
+Important:
+- Not a replacement for therapy
+- If crisis detected → provide emergency resources immediately
 - Never diagnose conditions
-- Always end with a question or gentle prompt to keep the conversation going
-
-Crisis keywords to watch: "kill myself", "end it all", "don't want to live", "hurt myself", "suicide", "self harm"
 """
 
+# -------------------- Data --------------------
 RESOURCES = {
     "anxiety": [
-        {"title": "4-7-8 Breathing Exercise", "type": "exercise", "desc": "Inhale 4s, hold 7s, exhale 8s. Repeat 4 times.", "link": "https://www.healthline.com/health/4-7-8-breathing"},
-        {"title": "Understanding Anxiety", "type": "article", "desc": "How anxiety works and evidence-based coping strategies.", "link": "https://www.anxietycanada.com/articles/what-is-anxiety/"},
+        {"title": "4-7-8 Breathing", "link": "https://www.healthline.com/health/4-7-8-breathing"},
     ],
-    "depression": [
-        {"title": "Behavioral Activation Guide", "type": "exercise", "desc": "Schedule small enjoyable activities to lift mood.", "link": "https://www.psychologytools.com/resource/behavioral-activation/"},
-        {"title": "Understanding Depression", "type": "article", "desc": "Signs, causes, and paths to recovery.", "link": "https://www.nimh.nih.gov/health/topics/depression"},
+    "sadness": [
+        {"title": "Behavioral Activation", "link": "https://www.psychologytools.com/resource/behavioral-activation/"},
     ],
     "stress": [
-        {"title": "Progressive Muscle Relaxation", "type": "exercise", "desc": "Tense and release each muscle group to release tension.", "link": "https://www.mayoclinic.org/healthy-lifestyle/stress-management/in-depth/relaxation-technique/art-20045368"},
-        {"title": "5-4-3-2-1 Grounding", "type": "exercise", "desc": "Name 5 things you see, 4 you hear, 3 you can touch, 2 you smell, 1 you taste.", "link": "https://www.verywellmind.com/grounding-techniques-for-anxiety-4692574"},
-    ],
-    "sleep": [
-        {"title": "Sleep Hygiene Tips", "type": "article", "desc": "Evidence-based habits for better sleep quality.", "link": "https://www.sleepfoundation.org/sleep-hygiene"},
-        {"title": "Body Scan Meditation", "type": "exercise", "desc": "Guided relaxation to help you fall asleep.", "link": "https://www.mindful.org/body-scan-meditation/"},
+        {"title": "5-4-3-2-1 Grounding", "link": "https://www.verywellmind.com/grounding-techniques-for-anxiety-4692574"},
     ],
     "general": [
-        {"title": "Mindfulness Meditation", "type": "exercise", "desc": "A 5-minute breathing meditation to center yourself.", "link": "https://www.headspace.com/meditation/breathing-exercises"},
-        {"title": "Journaling for Mental Health", "type": "article", "desc": "How writing helps process emotions and reduce stress.", "link": "https://www.urmc.rochester.edu/encyclopedia/content.aspx?ContentID=4552&ContentTypeID=1"},
+        {"title": "Mindfulness Meditation", "link": "https://www.headspace.com/meditation"},
     ],
 }
 
-CRISIS_KEYWORDS = ["kill myself", "end it all", "don't want to live", "hurt myself", "suicide", "self harm", "selfharm", "want to die", "no reason to live"]
+CRISIS_KEYWORDS = [
+    "kill myself", "end it all", "don't want to live",
+    "hurt myself", "suicide", "self harm", "want to die"
+]
 
-CRISIS_RESPONSE = """I hear you, and I'm deeply concerned about your safety right now. 
+CRISIS_RESPONSE = """I’m really sorry you're feeling this way. Your safety matters.
 
-Please reach out immediately to:
-🆘 **iCall (India)**: 9152987821
-🆘 **Vandrevala Foundation**: 1860-2662-345 (24/7)
-🆘 **NIMHANS**: 080-46110007
+Please reach out immediately:
+🆘 iCall: 9152987821  
+🆘 Vandrevala Foundation: 1860-2662-345  
+🆘 NIMHANS: 080-46110007  
 
-You don't have to face this alone. A trained counselor can help right now. Would you be willing to call one of these numbers?"""
+You don’t have to go through this alone. Would you be willing to call one of them?"""
 
+# -------------------- Models --------------------
 class Message(BaseModel):
     role: str
     content: str
@@ -86,87 +98,107 @@ class ChatRequest(BaseModel):
 class SentimentRequest(BaseModel):
     text: str
 
-def detect_crisis(text: str) -> bool:
-    text_lower = text.lower()
-    return any(kw in text_lower for kw in CRISIS_KEYWORDS)
-
-def analyze_sentiment(text: str) -> dict:
+# -------------------- NLP --------------------
+def analyze_sentiment(text: str):
     blob = TextBlob(text)
-    polarity = blob.sentiment.polarity  # -1 to 1
-    subjectivity = blob.sentiment.subjectivity  # 0 to 1
+    polarity = blob.sentiment.polarity
 
     if polarity > 0.3:
         mood = "positive"
-        emoji = "😊"
-    elif polarity > 0.0:
+    elif polarity > 0:
         mood = "slightly positive"
-        emoji = "🙂"
-    elif polarity == 0.0:
+    elif polarity == 0:
         mood = "neutral"
-        emoji = "😐"
     elif polarity > -0.3:
         mood = "slightly negative"
-        emoji = "😔"
     else:
         mood = "negative"
-        emoji = "😢"
 
     return {
         "polarity": round(polarity, 3),
-        "subjectivity": round(subjectivity, 3),
         "mood": mood,
-        "emoji": emoji,
-        "score": round((polarity + 1) / 2 * 100)  # 0-100 scale
+        "score": round((polarity + 1) / 2 * 100)
     }
 
-def get_resources(messages: List[Message]) -> List[dict]:
-    all_text = " ".join([m.content.lower() for m in messages])
-    matched = []
-    for topic, resources in RESOURCES.items():
-        if topic != "general" and topic in all_text:
-            matched.extend(resources)
-    if not matched:
-        matched = RESOURCES["general"]
-    return matched[:3]
+def detect_emotion(text: str):
+    text = text.lower()
+    if "anxious" in text or "nervous" in text:
+        return "anxiety"
+    elif "sad" in text or "down" in text:
+        return "sadness"
+    elif "stress" in text or "overwhelmed" in text:
+        return "stress"
+    return "general"
 
+def detect_crisis(text: str):
+    text_lower = text.lower()
+    sentiment = analyze_sentiment(text)
+
+    keyword_flag = any(kw in text_lower for kw in CRISIS_KEYWORDS)
+    return keyword_flag or sentiment["polarity"] < -0.6
+
+def get_resources(emotion: str):
+    return RESOURCES.get(emotion, RESOURCES["general"])
+
+# -------------------- Routes --------------------
 @app.post("/chat")
 async def chat(request: ChatRequest):
-    last_message = request.messages[-1].content if request.messages else ""
+    if not request.messages:
+        raise HTTPException(status_code=400, detail="No messages provided")
+
+    last_message = request.messages[-1].content
+
+    # Session memory
+    if request.session_id:
+        history = get_session_history(request.session_id)
+        messages = history + request.messages
+        update_session(request.session_id, messages)
+    else:
+        messages = request.messages
 
     # Crisis detection
     is_crisis = detect_crisis(last_message)
+    sentiment = analyze_sentiment(last_message)
+    emotion = detect_emotion(last_message)
+    resources = get_resources(emotion)
+
     if is_crisis:
-        sentiment = analyze_sentiment(last_message)
-        resources = get_resources(request.messages)
         return {
             "response": CRISIS_RESPONSE,
             "sentiment": sentiment,
+            "emotion": emotion,
             "resources": resources,
             "is_crisis": True
         }
 
-    # Build messages for Groq
+    # Build LLM input
     groq_messages = [{"role": "system", "content": SYSTEM_PROMPT}]
-    for msg in request.messages[-10:]:  # last 10 messages for context
+    for msg in messages[-10:]:
         groq_messages.append({"role": msg.role, "content": msg.content})
 
     try:
         completion = client.chat.completions.create(
             model="llama3-8b-8192",
             messages=groq_messages,
-            temperature=0.75,
-            max_tokens=600,
+            temperature=0.7,
+            max_tokens=500,
         )
         response_text = completion.choices[0].message.content
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"LLM error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
-    sentiment = analyze_sentiment(last_message)
-    resources = get_resources(request.messages)
+    # Logging
+    logging.info({
+        "time": datetime.now().isoformat(),
+        "sentiment": sentiment,
+        "emotion": emotion,
+        "crisis": is_crisis
+    })
 
     return {
         "response": response_text,
         "sentiment": sentiment,
+        "emotion": emotion,
         "resources": resources,
         "is_crisis": False
     }
@@ -174,6 +206,12 @@ async def chat(request: ChatRequest):
 @app.post("/analyze-sentiment")
 async def analyze(req: SentimentRequest):
     return analyze_sentiment(req.text)
+
+@app.get("/daily-checkin")
+async def daily_checkin():
+    return {
+        "prompt": "How are you feeling today? One word is enough 🌱"
+    }
 
 @app.get("/health")
 async def health():
